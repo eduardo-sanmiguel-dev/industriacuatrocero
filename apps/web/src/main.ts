@@ -1,22 +1,12 @@
-import { Header } from "@repo/ui/header";
 import "./style.css";
-import typescriptLogo from "/typescript.svg";
-import { Counter } from "@repo/ui/counter";
-import { setupCounter } from "@repo/ui/setup-counter";
+import { createElement } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    ${Header({ title: "Web" })}
-    <div class="card">
-      ${Counter()}
-    </div>
-  </div>
-`;
+const rootElement = document.querySelector<HTMLDivElement>("#app");
 
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+if (!rootElement) {
+  throw new Error("No se encontró el contenedor #app");
+}
+
+createRoot(rootElement).render(createElement(App));
