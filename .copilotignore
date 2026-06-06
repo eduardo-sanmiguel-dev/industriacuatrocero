@@ -1,0 +1,26 @@
+# 1. Dependencias y Enlaces Simbólicos de pnpm
+**/node_modules/**
+**/.pnpm/**
+**/pnpm-lock.yaml
+
+# 2. Cachés de Orquestación y Compilación (Turborepo y Herramientas)
+**/.turbo/**
+**/.cache/**
+**/dist/**
+**/build/**
+**/.expo/**
+**/web-build/**
+
+# 3. Archivos Locales de Entorno y Secretos (Seguridad)
+**/.env
+**/.env.*
+**/local.properties
+
+# 4. Archivos de Configuración y Logs que ensucian el contexto
+**/*.log
+**/.eslintcache
+**/.prettiercache
+**/.tsconfig.tsbuildinfo
+
+# 5. Código autogenerado o compilado (Si usas TypeORM/Prisma en el futuro)
+**/migrations/**

@@ -2,9 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { AppModule } from './app.module';
 import { env } from './env';
+import { VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // 1. Asigna el prefijo global básico (solo 'api')
+  app.setGlobalPrefix('api');
+
+  // 2. 🚀 ACTIVA EL VERSIONADO NATIVO POR URI
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1', // Hace que por defecto todo sea v1
+  });
 
   // 1. Definir los orígenes permitidos
   const whitelist = [

@@ -10,6 +10,9 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "build/**"]
     },
+    "api#build": {
+      "dependsOn": ["web#build"]
+    },
     "lint": {},
     "dev": {
       "cache": false,
