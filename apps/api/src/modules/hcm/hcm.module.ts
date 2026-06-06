@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { HcmService } from './hcm.service';
-import { HcmController } from './hcm.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HcmArea } from './entities';
+import { AreaController } from './controllers';
+import { AreaService } from './services';
 
 @Module({
-  controllers: [HcmController],
-  providers: [HcmService],
+  imports: [TypeOrmModule.forFeature([HcmArea])],
+  controllers: [AreaController],
+  providers: [AreaService],
+  exports: [AreaService],
 })
 export class HcmModule {}

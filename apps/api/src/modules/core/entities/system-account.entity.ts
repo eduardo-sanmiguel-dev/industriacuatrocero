@@ -3,8 +3,8 @@ import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.
 import { User } from './user.entity';
 
 @Entity({ name: 'core_system_accounts' })
+@Index(['email', 'tenantId'], { unique: true }) // Garantiza que no haya dos cuentas con el mismo email dentro del mismo tenant
 export class SystemAccount extends BaseTenantEntity {
-  @Index({ unique: true })
   @Column({ type: 'varchar', length: 150, name: 'email' })
   email!: string; // Correo electrónico único utilizado como identificador principal para el inicio de sesión
 

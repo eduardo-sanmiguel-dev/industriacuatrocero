@@ -3,7 +3,7 @@ pnpm --filter api migration:run
 pnpm --filter api migration:revert
 pnpm --filter api db:seed
 
-pnpm dlx @nestjs/cli generate resource modules/hcm --no-spec
+pnpm dlx @nestjs/cli generate resource modules/auth --no-spec
 
 'America/Mexico_City'
 
