@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 
 import { join } from 'path';
 
-import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { env } from 'process';
 import { isDevelopment, isProduction } from './env';
@@ -24,7 +23,6 @@ import { HcmModule } from './modules/hcm/hcm.module';
       migrationsRun: isProduction,
       migrations: [join(__dirname, 'database/migrations/*.{ts,js}')],
     }),
-    UsersModule,
     CoreModule,
     HcmModule,
   ],

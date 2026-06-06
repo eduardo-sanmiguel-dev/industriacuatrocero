@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InicializarEstructuraCore1780705149646 implements MigrationInterface {
-    name = 'InicializarEstructuraCore1780705149646'
+export class InicializarEstructuraCore1780705900235 implements MigrationInterface {
+    name = 'InicializarEstructuraCore1780705900235'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "core_countries" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "country_code" character varying(2) NOT NULL, "name" character varying(100) NOT NULL, "phone_code" character varying(5) NOT NULL, "currency_code" character varying(3) NOT NULL, CONSTRAINT "UQ_ebed2e4e3c101bd0192d899e4b5" UNIQUE ("name"), CONSTRAINT "PK_9074e45b7c98fa89aa3263044a3" PRIMARY KEY ("id"))`);
