@@ -10,10 +10,15 @@
       "@synergy/types": ["../../packages/types"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-
-  // 🚀 SOLUCIÓN DEFINITIVA: Bloque hermano que le ordena a TypeScript
-  // ignorar el código web y estilos intrusivos durante el typecheck de Expo
+  // 🚀 INCLUSIÓN FORMAL: Mapea tu global.d.ts y los archivos TypeScript nativos de Expo
+  "include": [
+    "global.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  // 🛡️ BLINDAJE ANTICONTAMINACIÓN: Evita que el typecheck de Expo analice código exclusivo de la web
   "exclude": [
     "node_modules",
     "src/**/*.web.tsx",
