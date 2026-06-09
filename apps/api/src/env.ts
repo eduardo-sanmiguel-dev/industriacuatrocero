@@ -13,6 +13,9 @@ const envSchema = z.object({
   PORT: z.string().transform(Number),
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string().min(8),
+  JWT_REFRESH_SECRET: z.string().min(8, {
+    message: 'El JWT_REFRESH_SECRET debe tener al menos 8 caracteres.',
+  }),
 });
 
 const parsedEnv = envSchema.parse(process.env);

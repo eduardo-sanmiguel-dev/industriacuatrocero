@@ -7,5 +7,6 @@ pnpm dlx @nestjs/cli generate resource modules/auth --no-spec
 
 'America/Mexico_City'
 
+pnpm --filter api start:prod
 
 pnpm --filter api migration:generate src/database/migrations/InicializarEstructuraCore && pnpm --filter api migration:run && pnpm --filter api db:seed

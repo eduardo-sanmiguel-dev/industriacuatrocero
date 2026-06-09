@@ -1,9 +1,12 @@
-import { ApiClient } from "@synergy/api-client";
-import { env } from "./env";
-// Nota: En Mobile se suele usar SecureStore de Expo en lugar de localStorage
+import { SynergyApiClient } from "@synergy/api-client";
 import * as SecureStore from "expo-secure-store";
 
-export const api = new ApiClient({
-  baseUrl: env.EXPO_PUBLIC_API_URL,
-  authToken: () => SecureStore.getItem("token"),
+export const api = new SynergyApiClient({
+  baseUrl: "http://synergy.com",
+  getMobileToken: () => SecureStore.getItemAsync("access_token"),
+  getMobileRefreshToken: () => SecureStore.getItemAsync("refresh_token"),
+  saveMobileToken: (token) => SecureStore.setItemAsync("access_token", token),
+  onSessionExpired: () => {
+    // Código nativo de tu router para mandar a Eduardo o Victoria al Login de Expo
+  },
 });

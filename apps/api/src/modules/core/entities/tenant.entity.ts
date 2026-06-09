@@ -1,6 +1,14 @@
-import { Entity, Column, Index, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+} from 'typeorm';
 import { BaseAuditEntity } from '../../../common/database/entities';
 import { Country } from './country.entity';
+import { TenantBrand } from './tenant-brand.entity';
 
 // Tipo estricto en código para limitar las opciones del modelo de monetización SaaS
 export type PlanType = 'BASIC' | 'PRO' | 'PREMIUM';
@@ -38,4 +46,7 @@ export class Tenant extends BaseAuditEntity {
   @ManyToOne(() => Country, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'country_id' }) // 🚀 CAMBIO SENSATO: Cambiamos el nombre a country_id porque ahora apuntará al UUID de core_countries
   country!: Country; // Instancia del país al que pertenece la organización cliente
+
+  @OneToOne(() => TenantBrand, (brand) => brand.tenant)
+  brand?: TenantBrand;
 }

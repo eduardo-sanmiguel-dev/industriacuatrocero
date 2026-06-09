@@ -3,9 +3,12 @@ import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-option
 import { AppModule } from './app.module';
 import { env } from './env';
 import { VersioningType } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser()); // 🚀 Habilita la lectura automática de cookies seguras
 
   // 1. Asigna el prefijo global básico (solo 'api')
   app.setGlobalPrefix('api');
@@ -18,6 +21,7 @@ async function bootstrap() {
 
   // 1. Definir los orígenes permitidos
   const whitelist = [
+    'http://localhost:3000',
     'http://localhost:5173', // Tu aplicación Web en desarrollo (Vite)
     // 'https://tu-dominio-de-produccion.com', // (Descomenta y añade en el futuro para producción)
   ];
