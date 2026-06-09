@@ -6,9 +6,19 @@
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@/assets/*": ["./assets/*"],
+      "@assets/*": ["./assets/*"],
       "@synergy/types": ["../../packages/types"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+
+  // 🚀 SOLUCIÓN DEFINITIVA: Bloque hermano que le ordena a TypeScript
+  // ignorar el código web y estilos intrusivos durante el typecheck de Expo
+  "exclude": [
+    "node_modules",
+    "src/**/*.web.tsx",
+    "src/**/*.web.ts",
+    "src/**/*.css",
+    "**/*.module.css"
+  ]
 }
