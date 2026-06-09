@@ -16,6 +16,10 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(8, {
     message: 'El JWT_REFRESH_SECRET debe tener al menos 8 caracteres.',
   }),
+  CORS_WHITELIST: z
+    .string()
+    .transform((val) => val.split(','))
+    .pipe(z.array(z.string().url())),
 });
 
 const parsedEnv = envSchema.parse(process.env);

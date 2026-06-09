@@ -20,11 +20,7 @@ async function bootstrap() {
   });
 
   // 1. Definir los orígenes permitidos
-  const whitelist = [
-    'http://localhost:3000',
-    'http://localhost:5173', // Tu aplicación Web en desarrollo (Vite)
-    // 'https://tu-dominio-de-produccion.com', // (Descomenta y añade en el futuro para producción)
-  ];
+  const whitelist = env.CORS_WHITELIST;
 
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
