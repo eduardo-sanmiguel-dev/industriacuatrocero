@@ -28,3 +28,16 @@ export interface UserProfileResponse {
     subdomain: string;
   };
 }
+
+export interface TenantPublicBrandResponse {
+  id: string;
+  subdomain: string;
+  brand: {
+    companyLegalName: string | null;
+    loginWelcomeText: string | null;
+    primaryColor: string;
+    sidebarBgColor: string;
+    logoUrl: string | null;
+    faviconUrl: string | null;
+  } | null;
+}

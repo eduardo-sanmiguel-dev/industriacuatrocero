@@ -37,6 +37,10 @@ import { TenantContextModule } from './common/context/tenant-context.module';
         path: 'hcm', // Prefijo global que se inyectará al inicio de todas las rutas del módulo
         module: HcmModule, // Aplica para todos los controladores registrados dentro de HcmModule
       },
+      {
+        path: 'core', // 🚀 NUEVO: Prefijo global para las tablas base (Países, Tenants, Usuarios)
+        module: CoreModule,
+      },
     ]),
     AuthModule,
   ],
