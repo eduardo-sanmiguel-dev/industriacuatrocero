@@ -4,6 +4,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "strictNullChecks": true,
+
+    // 🚀 SOLUCIÓN DEFINITIVA: Le enseña a TypeScript a reconocer las importaciones virtuales de la PWA
+    "types": ["vite/client", "vite-plugin-pwa/react"],
+
     "paths": {
       "@synergy/types": ["../../packages/types"]
     }

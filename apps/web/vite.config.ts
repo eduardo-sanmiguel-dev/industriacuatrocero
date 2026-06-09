@@ -10,6 +10,12 @@ export default defineConfig(({ command }) => {
         // Desactiva el Service Worker en desarrollo para que no guarde caché corrupta
         disable: command === "serve",
         registerType: "autoUpdate",
+        workbox: {
+          // 🔥 BLINDAJE EXTRA: Desactiva el almacenamiento en caché del propio archivo sw.js
+          // Evita que el navegador guarde en caché al "centinela" que vigila los cambios.
+          skipWaiting: true,
+          clientsClaim: true,
+        },
         includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
         manifest: {
           name: "Synergy Core",
