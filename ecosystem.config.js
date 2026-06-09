@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "industriacautrocero",
+      name: "industriacuatrocero",
       // 🚀 SOLUCIÓN: Como 'cwd' ya te mete a /apps/api, el script está directo en dist/main.js
       script: "dist/main.js",
       cwd: "./apps/api", // Te posiciona en la carpeta del backend primero
