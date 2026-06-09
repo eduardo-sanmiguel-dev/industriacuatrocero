@@ -28,6 +28,16 @@ async function bootstrap() {
       // no envían la cabecera 'origin' (es undefined).
       // Si es undefined o está en la whitelist, permitimos el acceso.
       if (!origin || whitelist.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // --- AQUÍ ENTRA LA MAGIA PARA EL MULTI-TENANT ---
+      // Esta Regex valida que el origen empiece con http:// o https://
+      // y termine exactamente en .industriacuatrocero.com o sea el dominio raíz.
+      const tenantRegex =
+        /^https?:\/\/(?:[a-z0-9-]+\.)*industriacuatrocero\.com$/i;
+
+      if (tenantRegex.test(origin)) {
         callback(null, true);
       } else {
         callback(new Error('No permitido por políticas de CORS'));
