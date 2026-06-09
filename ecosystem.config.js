@@ -13,10 +13,6 @@ module.exports = {
       error_file: "./logs/api-error.log",
       out_file: "./logs/api-out.log",
       time: true, // Agrega la estampa de tiempo UTC a los logs
-
-      env_production: {
-        NODE_ENV: "production",
-      },
     },
   ],
 };
