@@ -30,7 +30,7 @@ const LoginPage = () => {
     return () => clearInterval(interval);
   }, [updateServiceWorker]);
 
-  return <div>Test deploy</div>;
+  return <div>Reload Ok done</div>;
 };
 
 export default LoginPage;
