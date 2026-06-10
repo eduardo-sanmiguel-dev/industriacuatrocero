@@ -362,7 +362,7 @@ export default function LoginPage() {
                 {/* Actions */}
                 <div className="pt-2">
                   <button
-                    type="submit"
+                    type={brandError ? "button" : "submit"}
                     disabled={loading}
                     style={{ backgroundColor: primaryColor }}
                     className="w-full h-11 text-white font-bold text-xs rounded-lg shadow-sm hover:shadow transition-all duration-200 transform active:scale-[0.99] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 relative overflow-hidden cursor-pointer"
@@ -375,10 +375,15 @@ export default function LoginPage() {
                           {loadingStep === 2 && "CREANDO TÚNEL..."}
                         </span>
                       </div>
+                    ) : !brandError ? (
+                      <>
+                        <span>Iniciar Sesión</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </>
                     ) : (
                       <>
-                        <span>Ingresar a Terminal</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                        <span>Error de marca</span>
                       </>
                     )}
                   </button>
