@@ -14,14 +14,6 @@ export class TenantMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const currentPath = req.originalUrl || req.url || '';
-    if (
-      currentPath.includes('/tenants/subdomain/') &&
-      currentPath.includes('/brand')
-    ) {
-      return next();
-    }
-
     const host = req.headers.host || '';
 
     // 🚀 BLINDAJE EN BACKEND: Forzamos la lectura de la primera posición del arreglo
