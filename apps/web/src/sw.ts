@@ -1,28 +1,28 @@
 /// <reference lib="webworker" />
 
 import { precacheAndRoute } from "workbox-precaching";
-// 🚀 Las importaciones ahora serán 100% reconocidas tras el comando pnpm add
 import { registerRoute } from "workbox-routing";
-import { NetworkFirst } from "workbox-strategies";
+// 🚀 CAMBIO CLAVE: Importamos NetworkOnly en lugar de NetworkFirst
+import { NetworkOnly } from "workbox-strategies";
 
 declare const self: ServiceWorkerGlobalScope;
 
-// Inyección automática que realiza Vite en el build de producción
+// Inyección automática de archivos estáticos que realiza Vite (HTML, JS, CSS)
 precacheAndRoute(self.__WB_MANIFEST);
 
-// 🔒 REGLA DE EXCLUSIÓN DEFINITIVA MULTI-TENANT:
-// Evitamos que el Service Worker intente cachear o interceptar consultas de datos,
-// garantizando que las llamadas a /api/v1/core/... viajen directo a internet en tiempo real.
+// 🔒 BLINDAJE ABSOLUTO DE RED:
+// Le prohibimos terminantemente al Service Worker guardar en caché o adivinar
+// cualquier petición que empiece con la palabra "/api".
+// La PWA se apartará y obligará al navegador a ir siempre a internet a consultar a Nginx.
 registerRoute(
-  // 🚀 SOLUCIÓN AL ERROR IMPLICIT 'ANY': Tipamos explícitamente el parámetro desestructurado como URL nativa
   ({ url }: { url: URL }) => url.pathname.startsWith("/api"),
-  new NetworkFirst(), // Forzamos a que consulte siempre al servidor NestJS primero
+  new NetworkOnly(), // ⚡ Internet puro. Cero intervención de la caché local.
 );
 
-// Escuchar cuando el usuario presiona "Actualizar Ahora" desde React
+// Escuchar el mensaje de actualización manual de React
 self.addEventListener("message", (event: ExtendableMessageEvent) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting(); // Fuerza la muerte inmediata de la caché e instala la nueva versión
+    self.skipWaiting();
   }
 });
 
