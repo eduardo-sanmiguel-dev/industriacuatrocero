@@ -6,7 +6,7 @@ export default function App() {
 
   // 🧠 CAPA DE CONTROL DE LA PWA
   const {
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onNeedRefresh() {
