@@ -14,30 +14,29 @@ export class TenantMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    // 🚀 Al importar de 'express', req.headers.host vuelve a ser totalmente legal y tipado de forma segura
     const host = req.headers.host || '';
 
-    // Extraemos la primera posición del subdominio de forma limpia
-    const subdomain = host.split('.')[0] || '';
+    // 🚀 BLINDAJE EN BACKEND: Forzamos la lectura de la primera posición del arreglo
+    const targetSubdomain = host.split('.')[0] || '';
 
-    const targetSubdomain = subdomain.includes('localhost')
-      ? 'trujillo'
-      : subdomain;
+    // Regla de escape local si la requieres
+    const cleanSubdomain =
+      targetSubdomain === 'localhost' || targetSubdomain === '127'
+        ? 'hada'
+        : targetSubdomain;
 
     const tenant = await this.tenantRepository.findOne({
-      where: { subdomain: targetSubdomain, isActive: true },
-      select: {
-        id: true,
-      },
+      where: { subdomain: cleanSubdomain, isActive: true },
+      select: { id: true },
     });
 
     if (!tenant) {
+      // 🛡️ Esto te revelará exactamente qué palabra está intentando buscar tu backend en la base de datos
       throw new NotFoundException(
-        `La organización "${targetSubdomain}" no existe.`,
+        `La organización "${cleanSubdomain}" no existe.`,
       );
     }
 
-    // Envolvemos la petición dentro de tu nuevo almacén asíncrono (ALS)
     this.tenantContext.run(tenant.id, () => {
       next();
     });
