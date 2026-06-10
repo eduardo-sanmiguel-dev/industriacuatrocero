@@ -62,7 +62,7 @@ export class AppModule implements NestModule {
         // 1. Anteponemos 'api/' porque es tu Global Prefix obligatorio de red.
         // 2. Reemplazamos '(.*)' por '*subdomain' para cumplir con el estándar moderno de path-to-regexp.
         {
-          path: 'api/core/tenants/subdomain/*subdomain/brand',
+          path: 'api/v1/core/tenants/subdomain/*subdomain/brand',
           method: RequestMethod.GET, // Acotamos el método HTTP exclusivamente para peticiones de lectura
         },
       )
