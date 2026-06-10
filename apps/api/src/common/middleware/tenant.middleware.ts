@@ -14,7 +14,7 @@ export class TenantMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const host = req.headers.host || '';
+    const host = req.headers.referer || '';
 
     // 🚀 BLINDAJE EN BACKEND: Forzamos la lectura de la primera posición del arreglo
     const targetSubdomain = host.split('.')[0] || '';
