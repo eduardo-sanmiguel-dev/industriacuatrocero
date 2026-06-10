@@ -23,6 +23,10 @@ export class TenantMiddleware implements NestMiddleware {
       return next();
     }
 
+    if (currentPath.includes('/tenants/registered')) {
+      return next();
+    }
+
     // 2. 🌍 EXTRACCIÓN SAAS INMUNE A CLOUDFLARE:
     // Capturamos el origen real desde las cabeceras que el navegador web inyecta de forma obligatoria
     const originHeader = req.headers.origin || req.headers.referer || '';
@@ -42,8 +46,10 @@ export class TenantMiddleware implements NestMiddleware {
     const targetSubdomain = parts[0] || ''; // Extrae limpiamente la palabra 'hada' o 'trujillo'
 
     // Regla de escape automática para desarrollo local en tu computadora
+    const isDevelopment = process.env.NODE_ENV === 'development';
     const cleanSubdomain =
-      targetSubdomain === 'localhost' || targetSubdomain === '127'
+      isDevelopment &&
+      (targetSubdomain === 'localhost' || targetSubdomain === '127')
         ? 'hada'
         : targetSubdomain;
 

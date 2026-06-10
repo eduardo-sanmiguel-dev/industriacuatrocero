@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Tenant } from '../entities/tenant.entity';
 
 // 🌎 CONTRATO COMPARTIDO: Importamos la interfaz exacta desde tu paquete centralizado de Turborepo
-import { TenantPublicBrandResponse } from '@synergy/types';
+import { TenantPublicBrandResponse, TenantPublicOption } from '@synergy/types';
 
 @Injectable()
 export class TenantService {
@@ -59,5 +59,27 @@ export class TenantService {
           }
         : null,
     };
+  }
+
+  async getRegisteredPublicTenants(): Promise<TenantPublicOption[]> {
+    const tenants = await this.tenantRepository.find({
+      where: { isActive: true },
+      select: {
+        id: true,
+        subdomain: true,
+        name: true,
+        commercialName: true,
+      },
+      order: {
+        name: 'ASC',
+      },
+    });
+
+    return tenants.map((tenant) => ({
+      id: tenant.id,
+      subdomain: tenant.subdomain,
+      name: tenant.name,
+      commercialName: tenant.commercialName ?? null,
+    }));
   }
 }

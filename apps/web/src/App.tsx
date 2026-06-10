@@ -14,6 +14,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useTenantBrand } from "./hooks/useTenantBrand";
+import { useTenantBrandStore } from "./store/tenantBrand.store";
+import { isDevelopment } from "./env";
 
 const DEFAULT_BRAND = {
   companyLegalName: "CORE OS",
@@ -45,11 +47,18 @@ function applyFavicon(href: string | null) {
 }
 
 export default function LoginPage() {
-  const {
-    brandJson,
-    errorLog: brandError,
-    isLoading: brandLoading,
-  } = useTenantBrand();
+  const brandJson = useTenantBrandStore((state) => state.tenantBrand);
+  const brandError = useTenantBrandStore((state) => state.tenantBrandError);
+  const brandLoading = useTenantBrandStore((state) => state.tenantBrandLoading);
+  const selectedTenantSubdomain = useTenantBrandStore(
+    (state) => state.selectedTenantSubdomain,
+  );
+  const setSelectedTenantSubdomain = useTenantBrandStore(
+    (state) => state.setSelectedTenantSubdomain,
+  );
+
+  const { availableTenants, isLoadingTenants, needsTenantSelection } =
+    useTenantBrand();
 
   // Form State
   const [username, setUsername] = useState("");
@@ -63,10 +72,6 @@ export default function LoginPage() {
   const [authSuccess, setAuthSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log("Brand JSON actualizado:", brandJson);
-  }, [brandJson]);
 
   const brand = brandJson?.brand;
   const companyName = resolveText(
@@ -238,6 +243,34 @@ export default function LoginPage() {
         <div className="w-full max-w-85 mx-auto my-auto py-4">
           {!authSuccess ? (
             <div className="space-y-6 animate-fade-in-up">
+              {isDevelopment && (
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
+                  <p className="text-[10px] font-bold tracking-wider uppercase text-slate-600">
+                    Selector de tenant (solo desarrollo)
+                  </p>
+                  <select
+                    value={selectedTenantSubdomain ?? ""}
+                    onChange={(e) => {
+                      setSelectedTenantSubdomain(e.target.value || null);
+                    }}
+                    className="w-full h-10 rounded-lg border border-slate-300 bg-white px-3 text-xs text-slate-900 outline-none focus:border-slate-500"
+                  >
+                    <option value="">Selecciona un tenant registrado</option>
+                    {availableTenants.map((tenant) => (
+                      <option key={tenant.id} value={tenant.subdomain}>
+                        {tenant.commercialName || tenant.name} (
+                        {tenant.subdomain})
+                      </option>
+                    ))}
+                  </select>
+                  {isLoadingTenants && (
+                    <p className="text-[11px] text-slate-500">
+                      Cargando tenants registrados...
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Titles */}
               <div>
                 {logoUrl && (
@@ -375,8 +408,10 @@ export default function LoginPage() {
                 {/* Actions */}
                 <div className="pt-2">
                   <button
-                    type={brandError ? "button" : "submit"}
-                    disabled={loading}
+                    type={
+                      brandError || needsTenantSelection ? "button" : "submit"
+                    }
+                    disabled={loading || needsTenantSelection}
                     style={{ backgroundColor: primaryColor }}
                     className="w-full h-11 text-white font-bold text-xs rounded-lg shadow-sm hover:shadow transition-all duration-200 transform active:scale-[0.99] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 relative overflow-hidden cursor-pointer"
                   >
@@ -388,6 +423,11 @@ export default function LoginPage() {
                           {loadingStep === 2 && "CREANDO TÚNEL..."}
                         </span>
                       </div>
+                    ) : needsTenantSelection ? (
+                      <>
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                        <span>Selecciona un tenant</span>
+                      </>
                     ) : !brandError ? (
                       <>
                         <span>Iniciar Sesión</span>

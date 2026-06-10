@@ -41,3 +41,10 @@ export interface TenantPublicBrandResponse {
     faviconUrl: string | null;
   } | null;
 }
+
+export interface TenantPublicOption {
+  id: string;
+  subdomain: string;
+  name: string;
+  commercialName: string | null;
+}

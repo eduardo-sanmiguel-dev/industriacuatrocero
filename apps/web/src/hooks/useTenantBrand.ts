@@ -1,56 +1,128 @@
-import { useEffect, useState } from "react";
-import { TenantPublicBrandResponse } from "@synergy/types";
+import { useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { TenantPublicBrandResponse, TenantPublicOption } from "@synergy/types";
 import { api } from "../api"; // Tu ApiClient centralizado con Axios
+import { useTenantBrandStore } from "../store/tenantBrand.store";
+import { isDevelopment } from "../env";
+
+function resolveTargetSubdomain(hostname: string): string {
+  return hostname.split(".")[0] || "";
+}
 
 /**
  * Hook personalizado para gestionar el descubrimiento automático de Marca Blanca
  * basándose en el subdominio actual del navegador web.
  */
 export function useTenantBrand() {
-  const [brandJson, setBrandJson] = useState<TenantPublicBrandResponse | null>(
-    null,
+  const brandJson = useTenantBrandStore((state) => state.tenantBrand);
+  const errorLog = useTenantBrandStore((state) => state.tenantBrandError);
+  const isLoading = useTenantBrandStore((state) => state.tenantBrandLoading);
+  const setTenantBrand = useTenantBrandStore((state) => state.setTenantBrand);
+  const setTenantBrandError = useTenantBrandStore(
+    (state) => state.setTenantBrandError,
   );
-  const [errorLog, setErrorLog] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const setTenantBrandLoading = useTenantBrandStore(
+    (state) => state.setTenantBrandLoading,
+  );
+  const selectedTenantSubdomain = useTenantBrandStore(
+    (state) => state.selectedTenantSubdomain,
+  );
+  const setSelectedTenantSubdomain = useTenantBrandStore(
+    (state) => state.setSelectedTenantSubdomain,
+  );
+
+  const hostSubdomain = useMemo(
+    () => resolveTargetSubdomain(window.location.hostname),
+    [],
+  );
+
+  const targetSubdomain = isDevelopment
+    ? selectedTenantSubdomain || ""
+    : hostSubdomain;
+
+  const registeredTenantsQuery = useQuery({
+    queryKey: ["registered-tenants"],
+    queryFn: () => api.get<TenantPublicOption[]>("/core/tenants/registered"),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    enabled: isDevelopment,
+  });
+
+  const tenantBrandQuery = useQuery({
+    queryKey: ["tenant-brand", targetSubdomain],
+    queryFn: () =>
+      api.get<TenantPublicBrandResponse>(
+        `/core/tenants/subdomain/${targetSubdomain}/brand`,
+      ),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    enabled: !!targetSubdomain,
+  });
 
   useEffect(() => {
-    const host = window.location.hostname;
+    if (isDevelopment && !targetSubdomain) {
+      setTenantBrandLoading(false);
+      return;
+    }
 
-    // Extraemos la primera posición del arreglo de red
-    const extractedSubdomain = host.split(".")[0] || "";
+    setTenantBrandLoading(
+      tenantBrandQuery.isLoading || tenantBrandQuery.isFetching,
+    );
+  }, [
+    setTenantBrandLoading,
+    targetSubdomain,
+    tenantBrandQuery.isFetching,
+    tenantBrandQuery.isLoading,
+  ]);
 
-    // Escape de desarrollo local unificado
-    const targetSubdomain =
-      extractedSubdomain === "localhost" || extractedSubdomain === "127"
-        ? "hada" // Cambia a 'trujillo' según requieras probar en local
-        : extractedSubdomain;
+  useEffect(() => {
+    if (!isDevelopment || targetSubdomain) return;
 
-    api
-      .get<TenantPublicBrandResponse>(
-        `/core/tenants/subdomain/${targetSubdomain}/brand`,
-      )
-      .then((data) => {
-        setBrandJson(data);
-      })
-      .catch((err: unknown) => {
-        console.error(
-          "Error en el descubrimiento del Tenant mediante hook:",
-          err,
-        );
-        setErrorLog(
-          "No se pudo conectar con el servidor o el subdominio no existe.",
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+    setTenantBrand(null);
+    setTenantBrandError("Selecciona un tenant para simular en desarrollo.");
+  }, [isDevelopment, setTenantBrand, setTenantBrandError, targetSubdomain]);
+
+  useEffect(() => {
+    if (!tenantBrandQuery.data) return;
+
+    setTenantBrand(tenantBrandQuery.data);
+    setTenantBrandError(null);
+  }, [setTenantBrand, setTenantBrandError, tenantBrandQuery.data]);
+
+  useEffect(() => {
+    if (!tenantBrandQuery.error) return;
+
+    console.error(
+      "Error en el descubrimiento del Tenant mediante hook:",
+      tenantBrandQuery.error,
+    );
+    setTenantBrandError(
+      "No se pudo conectar con el servidor o el subdominio no existe.",
+    );
+  }, [setTenantBrandError, tenantBrandQuery.error]);
+
+  useEffect(() => {
+    if (!isDevelopment || !registeredTenantsQuery.error) return;
+
+    console.error(
+      "Error al consultar tenants registrados en desarrollo:",
+      registeredTenantsQuery.error,
+    );
+    setTenantBrandError(
+      "No se pudo cargar el listado de tenants para desarrollo.",
+    );
+  }, [registeredTenantsQuery.error, setTenantBrandError]);
 
   // Retornamos un objeto de control limpio y fuertemente tipado
   return {
     brandJson,
     errorLog,
     isLoading,
+    selectedTenantSubdomain,
+    setSelectedTenantSubdomain,
+    availableTenants: registeredTenantsQuery.data ?? [],
+    isLoadingTenants: registeredTenantsQuery.isLoading,
+    needsTenantSelection: isDevelopment && !selectedTenantSubdomain,
     // Helper utilitario por si tu UI necesita evaluar rápido si ya hay marca
     hasBrand: !!brandJson?.brand,
   };
