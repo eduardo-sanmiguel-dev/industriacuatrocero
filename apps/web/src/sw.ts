@@ -26,13 +26,6 @@ self.addEventListener("message", (event: ExtendableMessageEvent) => {
   }
 });
 
-// Escuchar cuando el usuario presiona "Actualizar Ahora" desde React
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting(); // Obliga al Service Worker viejo a morir inmediatamente
-  }
-});
-
 // Ejemplo 2: Controlar las notificaciones Push globales de tu SaaS (Hada / Trujillo)
 /* self.addEventListener("push", (event) => {
   const data = event.data

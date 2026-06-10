@@ -11,6 +11,12 @@ export default defineConfig(() => {
         srcDir: "src", // Carpeta donde vivirá tu archivo
         filename: "sw.ts", // Nombre de tu archivo fuente de control (puede ser .ts o .js)
         registerType: "prompt",
+        injectManifest: {
+          // Le indica a Workbox qué archivos compilar en producción
+          globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+          // 🔒 Evita que el Service Worker intente generar hashes corruptos si la API responde lento
+          dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
+        },
       }),
     ],
   };
