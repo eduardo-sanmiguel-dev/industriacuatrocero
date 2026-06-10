@@ -17,9 +17,7 @@ import { TenantContextModule } from './common/context/tenant-context.module';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../..', 'apps', 'web', 'dist'),
-      //exclude: ['/api/*path'],
       exclude: ['/api/{:path}'],
-      // exclude: [/^\/api/ as unknown as string],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

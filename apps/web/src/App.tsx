@@ -64,6 +64,10 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    console.log("Brand JSON actualizado:", brandJson);
+  }, [brandJson]);
+
   const brand = brandJson?.brand;
   const companyName = resolveText(
     brand?.companyLegalName,
@@ -163,7 +167,7 @@ export default function LoginPage() {
               {companyName}
             </span>
             <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">
-              {brandLoading ? "CARGANDO MARCA" : "TERMINAL INDUSTRIAL"}
+              {brandLoading ? "CARGANDO MARCA" : "PLATAFORMA SAAS"}
             </p>
           </div>
         </div>
@@ -171,9 +175,9 @@ export default function LoginPage() {
         {/* Big quiet typography */}
         <div className="my-auto max-w-sm">
           <h1 className="text-4xl xl:text-5xl font-light tracking-tight leading-[1.12] text-white">
-            Simplicidad <br />
+            Industria 4.0 <br />
             <span className="font-semibold" style={{ color: primaryColor }}>
-              e Inteligencia.
+              impulsada por IA.
             </span>
           </h1>
           <p className="mt-6 text-slate-400 tracking-wide leading-relaxed text-sm">
@@ -236,6 +240,15 @@ export default function LoginPage() {
             <div className="space-y-6 animate-fade-in-up">
               {/* Titles */}
               <div>
+                {logoUrl && (
+                  <div className="mb-4 flex w-full items-center justify-center">
+                    <img
+                      src={logoUrl}
+                      alt={`${companyName} logo`}
+                      className="h-auto w-auto max-h-14 sm:max-h-16 lg:max-h-32 max-w-56 sm:max-w-64 lg:max-w-lg object-contain"
+                    />
+                  </div>
+                )}
                 <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">
                   Acceso Industrial
                 </h2>
