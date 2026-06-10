@@ -1,28 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
-const LoginPage = () => {
-  const { updateServiceWorker } = useRegisterSW({
+export default function App() {
+  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
+
+  // 🧠 CAPA DE CONTROL DE LA PWA
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
     onNeedRefresh() {
-      console.log(
-        "✨ Nueva versión detectada en producción. Actualizando portal de Synergy...",
-      );
-      // 🔄 Fuerza la recarga física de la ventana del navegador aplicando los últimos cambios del deploy
-      window.location.reload();
+      // 🔥 EVENTO DETECTADO: El navegador ya descargó el nuevo deploy en segundo plano,
+      // pero la versión vieja sigue corriendo de forma segura para no interrumpir al usuario.
+      console.log("✨ Existe una nueva actualización lista en el servidor.");
+      setShowUpdateBanner(true); // Encendemos nuestro banner personalizado de React
     },
     onOfflineReady() {
-      console.log(
-        "📲 Aplicación multi-tenant lista para operar fuera de línea (Offline).",
-      );
+      console.log("📲 La aplicación ya puede operar sin conexión a internet.");
     },
   });
 
   useEffect(() => {
-    // 🧠 POLLING DEFENSIVO: Cada 5 minutos le pregunta al servidor si subiste un nuevo deploy,
-    // garantizando que si el operador de Trujillo deja la pantalla abierta todo el día, se actualice sola.
+    // 🔍 VIGILANTE CONSTANTE: Le pregunta al servidor cada 5 minutos si hay un nuevo deploy.
+    // Al estar en modo 'prompt', solo descargará los bytes nuevos sin romper nada.
     const interval = setInterval(
       () => {
-        updateServiceWorker(true);
+        updateServiceWorker(false); // Pasamos 'false' para que verifique silenciosamente
       },
       5 * 60 * 1000,
     );
@@ -30,10 +33,82 @@ const LoginPage = () => {
     return () => clearInterval(interval);
   }, [updateServiceWorker]);
 
-  return <div>Reload Ok done</div>;
-};
+  /**
+   * 🚀 DISPARADOR DEL CONTROL: El usuario decide aplicar la actualización
+   */
+  const handleApplyUpdate = () => {
+    // 1. Le ordena al Service Worker en espera que tome el control, limpie la caché vieja y se active
+    updateServiceWorker(true);
 
-export default LoginPage;
+    // 2. Apagamos el banner de la interfaz
+    setShowUpdateBanner(false);
+    setNeedRefresh(false);
+
+    // 3. Forzamos la recarga física limpia de la pestaña para que asimile el último build de producción
+    window.location.reload();
+  };
+
+  return (
+    <div style={{ padding: "20px", position: "relative" }}>
+      <h1>Synergy SaaS - Portal Corporativo</h1>
+      <p>Bienvenido al sistema de administración de Capital Humano.</p>
+
+      {/* 🎨 TU BANNER DE MARCA BLANCA PERSONALIZADO */}
+      {showUpdateBanner && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            backgroundColor: "var(--primary-color, #4F46E5)",
+            color: "#fff",
+            padding: "16px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          <span>
+            📢 Hay una nueva actualización disponible con mejoras para tu
+            organización.
+          </span>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={handleApplyUpdate}
+              style={{
+                backgroundColor: "#fff",
+                color: "#000",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              Actualizar Ahora
+            </button>
+            <button
+              onClick={() => setShowUpdateBanner(false)}
+              style={{
+                backgroundColor: "transparent",
+                color: "#fff",
+                border: "1px solid #fff",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Más tarde
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* import { useEffect, useState } from "react";
 // 🚀 CONTRATO MONOREPO: Importamos la interfaz exacta del perfil compartido
