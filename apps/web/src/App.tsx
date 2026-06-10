@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", position: "relative" }}>
-      <h1>Test Synergy SaaS - Portal Corporativo</h1>
+      <h1>Synergy SaaS - Portal Corporativo</h1>
       <p>Bienvenido al sistema de administración de Capital Humano.</p>
 
       {/* 🎨 TU BANNER DE MARCA BLANCA PERSONALIZADO */}
