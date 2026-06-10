@@ -50,6 +50,14 @@ import { TenantContextModule } from './common/context/tenant-context.module';
 export class AppModule implements NestModule {
   // 🌍 APLICACIÓN GLOBAL DEL MIDDLEWARE
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).forRoutes('*'); // 🚀 Aplica para el 100% de los endpoints de la API de forma automática
+    consumer
+      .apply(TenantMiddleware)
+      .exclude(
+        // 🚀 SOLUCIÓN: Excluimos de forma explícita este endpoint del aislamiento automático
+        // permitiendo que cualquier usuario anónimo consulte marcas visuales por el parámetro
+        'core/tenants/subdomain/(.*)/brand',
+        // Si tienes rutas de saas-admin globales, agrégalas también aquí
+      )
+      .forRoutes('*'); // 🚀 Aplica para el 100% de los endpoints de la API de forma automática
   }
 }
