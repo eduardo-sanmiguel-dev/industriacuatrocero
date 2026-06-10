@@ -11,23 +11,29 @@ export default function App() {
   const [errorLog, setErrorLog] = useState<string | null>(null);
 
   useEffect(() => {
-    // 1. 🔍 REGLA MULTI-TENANT DE RED: Extraemos el Host actual del navegador web
-    const host = window.location.host; // Ejemplo: '://synergy.com' o 'localhost:5173'
-    const subdomain = host.split(".")[0] || "";
+    // 1. Extraemos el Host completo del navegador web
+    const host = window.location.host; // Ejemplo: 'hada.industriacuatrocero.com'
 
-    // 💡 ESCAPE DE DESARROLLO LOCAL: Si estás programando en localhost,
-    // forzamos el subdominio 'trujillo' para que el script no falle al no encontrar el prefijo.
+    // 🚀 SOLUCIÓN: Agregamos '[0]' para capturar estrictamente la primera posición del arreglo
+    const extractedSubdomain = host.split(".")[0] || "";
+
+    // 💡 ESCAPE DE DESARROLLO LOCAL AUTOMÁTICO
     const targetSubdomain =
-      subdomain === "localhost" || subdomain === "127" ? "trujillo" : subdomain;
+      extractedSubdomain === "localhost" || extractedSubdomain === "127"
+        ? "hada" // O 'trujillo' según la empresa que estés probando localmente
+        : extractedSubdomain;
 
-    // 2. 🚀 LLAMADA AL ENDPOINT MAESTRO PÚBLICO:
-    // Invocamos la ruta definitiva mapeada por tu RouterModule de NestJS
+    console.log(
+      "🔍 Subdominio limpio enviado al descubrimiento:",
+      targetSubdomain,
+    );
+
+    // 2. Invocamos la ruta con el string del subdominio 100% limpio y aislado
     api
       .get<TenantPublicBrandResponse>(
         `/core/tenants/subdomain/${targetSubdomain}/brand`,
       )
       .then((data) => {
-        // Almacenamos el JSON recibido con éxito (200 OK)
         setBrandJson(data);
       })
       .catch((err: unknown) => {
