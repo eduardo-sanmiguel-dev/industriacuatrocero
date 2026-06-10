@@ -14,37 +14,56 @@ export class TenantMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const host = req.headers.referer || '';
+    // 1. 🔒 EXCLUSIÓN QUIRÚRGICA: Si es el endpoint público de descubrimiento estético, pasamos de largo
+    const currentPath = req.originalUrl || req.url || '';
+    if (
+      currentPath.includes('/tenants/subdomain/') &&
+      currentPath.includes('/brand')
+    ) {
+      return next();
+    }
 
-    // 🚀 BLINDAJE EN BACKEND: Forzamos la lectura de la primera posición del arreglo
-    const targetSubdomain = host.split('.')[0] || '';
+    // 2. 🌍 EXTRACCIÓN SAAS INMUNE A CLOUDFLARE:
+    // Capturamos el origen real desde las cabeceras que el navegador web inyecta de forma obligatoria
+    const originHeader = req.headers.origin || req.headers.referer || '';
 
-    console.log({
-      targetSubdomain,
-      headers: req.headers,
-      host,
-    });
+    // Si la petición viene de Postman o Expo (móviles) y no trae referer, caemos defensivamente al host de red
+    const rawHost = originHeader || req.headers.host || '';
 
-    // Regla de escape local si la requieres
+    // 🧠 LIMPIEZA DE PROTOCOLOS (REGEXP):
+    // Removemos 'http://', 'https://', 'www.' y cualquier diagonal residual o puertos (ej: :5173)
+    const cleanHost = rawHost
+      .replace(/^(https?:\/\/)?(www\.)?/, '') // Pone fin a los protocolos de internet
+      .split('/')[0] // Corta cualquier sub-ruta colgante de la URL
+      .split(':')[0]; // Remueve el puerto si estás probando localmente en desarrollo
+
+    // 🚀 AISLAMIENTO DE SUBDOMINIO: Cortamos el primer segmento antes del primer punto
+    const parts = cleanHost.split('.');
+    const targetSubdomain = parts[0] || ''; // Extrae limpiamente la palabra 'hada' o 'trujillo'
+
+    // Regla de escape automática para desarrollo local en tu computadora
     const cleanSubdomain =
       targetSubdomain === 'localhost' || targetSubdomain === '127'
         ? 'hada'
         : targetSubdomain;
 
-    console.log({ cleanSubdomain });
+    console.log(
+      `📡 [Multi-Tenant] Host procesado: "${cleanHost}" | Subdominio aislado: "${cleanSubdomain}"`,
+    );
 
+    // 3. 🔍 CONSULTA INDEXADA: Buscamos la empresa en la base de datos de producción
     const tenant = await this.tenantRepository.findOne({
       where: { subdomain: cleanSubdomain, isActive: true },
       select: { id: true },
     });
 
     if (!tenant) {
-      // 🛡️ Esto te revelará exactamente qué palabra está intentando buscar tu backend en la base de datos
       throw new NotFoundException(
-        `La organización "${cleanSubdomain}" no existe.`,
+        `La organización corporativa "${cleanSubdomain}" no existe o fue suspendida.`,
       );
     }
 
+    // 🧠 ASIGNACIÓN ALS: Amarramos de forma invisible el UUID de la empresa para blindar TypeORM
     this.tenantContext.run(tenant.id, () => {
       next();
     });
