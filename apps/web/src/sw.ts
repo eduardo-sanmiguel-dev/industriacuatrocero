@@ -1,23 +1,35 @@
-// 🚀 BLINDAJE DE TIPADO SW: Le enseña a TypeScript las propiedades globales de los Service Workers
 /// <reference lib="webworker" />
 
 import { precacheAndRoute } from "workbox-precaching";
+// 🚀 Las importaciones ahora serán 100% reconocidas tras el comando pnpm add
+import { registerRoute } from "workbox-routing";
+import { NetworkFirst } from "workbox-strategies";
 
-// 🤖 Declaramos el entorno global de forma estricta para el Service Worker
 declare const self: ServiceWorkerGlobalScope;
 
 // Inyección automática que realiza Vite en el build de producción
 precacheAndRoute(self.__WB_MANIFEST);
 
-// Resto de tu código nativo (Listeners, Push, etc.)...
+// 🔒 REGLA DE EXCLUSIÓN DEFINITIVA MULTI-TENANT:
+// Evitamos que el Service Worker intente cachear o interceptar consultas de datos,
+// garantizando que las llamadas a /api/v1/core/... viajen directo a internet en tiempo real.
+registerRoute(
+  // 🚀 SOLUCIÓN AL ERROR IMPLICIT 'ANY': Tipamos explícitamente el parámetro desestructurado como URL nativa
+  ({ url }: { url: URL }) => url.pathname.startsWith("/api"),
+  new NetworkFirst(), // Forzamos a que consulte siempre al servidor NestJS primero
+);
 
-// 🛠️ TU CÓDIGO NATIVO DEL SERVICE WORKER:
-// A partir de aquí puedes controlar y programar lo que tú quieras en el navegador
+// Escuchar cuando el usuario presiona "Actualizar Ahora" desde React
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting(); // Fuerza la muerte inmediata de la caché e instala la nueva versión
+  }
+});
 
-// Ejemplo 1: Escuchar cuando el usuario presiona "Actualizar Ahora" desde React
+// Escuchar cuando el usuario presiona "Actualizar Ahora" desde React
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
-    (self as any).skipWaiting();
+    self.skipWaiting(); // Obliga al Service Worker viejo a morir inmediatamente
   }
 });
 
