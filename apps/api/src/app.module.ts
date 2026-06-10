@@ -1,5 +1,10 @@
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 
 import { join } from 'path';
 
@@ -53,10 +58,13 @@ export class AppModule implements NestModule {
     consumer
       .apply(TenantMiddleware)
       .exclude(
-        // 🚀 SOLUCIÓN: Excluimos de forma explícita este endpoint del aislamiento automático
-        // permitiendo que cualquier usuario anónimo consulte marcas visuales por el parámetro
-        'core/tenants/subdomain/(.*)/brand',
-        // Si tienes rutas de saas-admin globales, agrégalas también aquí
+        // 🚀 SOLUCIÓN DEFINITIVA:
+        // 1. Anteponemos 'api/' porque es tu Global Prefix obligatorio de red.
+        // 2. Reemplazamos '(.*)' por '*subdomain' para cumplir con el estándar moderno de path-to-regexp.
+        {
+          path: 'api/core/tenants/subdomain/*subdomain/brand',
+          method: RequestMethod.GET, // Acotamos el método HTTP exclusivamente para peticiones de lectura
+        },
       )
       .forRoutes('*'); // 🚀 Aplica para el 100% de los endpoints de la API de forma automática
   }
