@@ -19,11 +19,18 @@ export class TenantMiddleware implements NestMiddleware {
     // 🚀 BLINDAJE EN BACKEND: Forzamos la lectura de la primera posición del arreglo
     const targetSubdomain = host.split('.')[0] || '';
 
+    console.log({
+      targetSubdomain,
+      host,
+    });
+
     // Regla de escape local si la requieres
     const cleanSubdomain =
       targetSubdomain === 'localhost' || targetSubdomain === '127'
         ? 'hada'
         : targetSubdomain;
+
+    console.log({ cleanSubdomain });
 
     const tenant = await this.tenantRepository.findOne({
       where: { subdomain: cleanSubdomain, isActive: true },

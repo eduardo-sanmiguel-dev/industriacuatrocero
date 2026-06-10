@@ -55,17 +55,6 @@ import { TenantContextModule } from './common/context/tenant-context.module';
 export class AppModule implements NestModule {
   // 🌍 APLICACIÓN GLOBAL DEL MIDDLEWARE
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(TenantMiddleware)
-      .exclude(
-        // 🚀 SOLUCIÓN DEFINITIVA:
-        // 1. Anteponemos 'api/' porque es tu Global Prefix obligatorio de red.
-        // 2. Reemplazamos '(.*)' por '*subdomain' para cumplir con el estándar moderno de path-to-regexp.
-        {
-          path: 'api/v1/core/tenants/subdomain/*subdomain/brand',
-          method: RequestMethod.GET, // Acotamos el método HTTP exclusivamente para peticiones de lectura
-        },
-      )
-      .forRoutes('*'); // 🚀 Aplica para el 100% de los endpoints de la API de forma automática
+    consumer.apply(TenantMiddleware).forRoutes('*'); // 🚀 Aplica para el 100% de los endpoints de la API de forma automática
   }
 }
