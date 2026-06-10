@@ -21,8 +21,8 @@ export class TenantMiddleware implements NestMiddleware {
 
     console.log({
       targetSubdomain,
-      host,
       headers: req.headers,
+      host,
     });
 
     // Regla de escape local si la requieres
