@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { TenantRolePermission } from './tenant-role-permission.entity';
-import { BaseTenantEntity } from '../../../common/database/entities';
+import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.entity';
 
 @Entity({ name: 'core_tenant_roles' })
 export class TenantRole extends BaseTenantEntity {

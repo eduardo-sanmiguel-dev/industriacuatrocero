@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { TenantPermission } from './tenant-permission.entity';
-import { BaseAuditEntity } from '../../../common/database/entities';
+import { BaseAuditEntity } from '../../../common/database/entities/base-audit.entity';
 
 @Entity({ name: 'core_tenant_components' })
 export class TenantComponent extends BaseAuditEntity {

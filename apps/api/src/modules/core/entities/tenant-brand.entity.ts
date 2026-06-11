@@ -1,6 +1,6 @@
 import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
 import { Tenant } from './tenant.entity';
-import { BaseAuditEntity } from '../../../common/database/entities';
+import { BaseAuditEntity } from '../../../common/database/entities/base-audit.entity';
 
 @Entity({ name: 'core_tenant_brands' })
 export class TenantBrand extends BaseAuditEntity {

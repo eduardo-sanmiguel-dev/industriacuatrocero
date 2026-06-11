@@ -1,6 +1,6 @@
 import { Column, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
-import { Tenant } from '../../../modules/core/entities';
+import { Tenant } from '../../../modules/core/entities/tenant.entity';
 
 // 🚀 BLINDAJE DE RENDIMIENTO: Crea un índice compuesto B-Tree en PostgreSQL combinando tenant_id y el id
 // Esto garantiza que consultas con millones de filas operativas sean instantáneas por cliente

@@ -6,7 +6,7 @@ import { TenantRolePermission } from '../../modules/core/entities/tenant-role-pe
 import { TenantUserRole } from '../../modules/core/entities/tenant-user-role.entity';
 import { Tenant } from '../../modules/core/entities/tenant.entity';
 import { SEED_CONFIG } from './seed.config';
-import { SystemAccount } from '../../modules/core/entities';
+import { SystemAccount } from '../../modules/core/entities/system-account.entity';
 
 export async function seedCorePermissions() {
   console.log(

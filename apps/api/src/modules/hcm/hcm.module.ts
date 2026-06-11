@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HcmArea } from './entities';
-import { AreaController } from './controllers';
-import { AreaService } from './services';
+import { HcmArea } from './entities/area.entity';
+import { AreaController } from './controllers/area.controller';
+import { AreaService } from './services/area.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([HcmArea])],

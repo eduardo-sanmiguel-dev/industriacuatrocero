@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { User } from './user.entity';
 import { TenantPermission } from './tenant-permission.entity';
-import { BaseTenantEntity } from '../../../common/database/entities';
+import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.entity';
 
 @Entity({ name: 'core_tenant_user_exceptions' })
 // 🔒 BLINDAJE DE EXCEPCIONES: Evita duplicados redundantes de la misma acción para el mismo usuario

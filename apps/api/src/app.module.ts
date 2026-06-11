@@ -10,7 +10,7 @@ import { CoreModule } from './modules/core/core.module';
 import { HcmModule } from './modules/hcm/hcm.module';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
-import { TenantMiddleware } from './common/middleware';
+import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { TenantContextModule } from './common/context/tenant-context.module';
 
 @Module({

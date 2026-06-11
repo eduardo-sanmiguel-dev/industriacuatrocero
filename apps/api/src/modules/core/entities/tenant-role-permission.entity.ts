@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { TenantRole } from './tenant-role.entity';
 import { TenantPermission } from './tenant-permission.entity';
-import { BaseTenantEntity } from '../../../common/database/entities';
+import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.entity';
 
 @Entity({ name: 'core_tenant_role_permissions' })
 // 🔒 BLINDAJE INDEXADO DE PRODUCCIÓN:

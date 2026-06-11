@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { TenantComponent } from './tenant-component.entity'; // 🚀 Enlace con la Tabla A (Padre)
-import { BaseAuditEntity } from '../../../common/database/entities';
+import { BaseAuditEntity } from '../../../common/database/entities/base-audit.entity';
 
 @Entity({ name: 'core_tenant_permissions' })
 export class TenantPermission extends BaseAuditEntity {

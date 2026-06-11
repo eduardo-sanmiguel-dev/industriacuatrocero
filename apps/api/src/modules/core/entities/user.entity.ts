@@ -1,5 +1,5 @@
 import { Entity, Column } from 'typeorm';
-import { BaseTenantEntity } from '../../../common/database/entities';
+import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.entity';
 
 @Entity({ name: 'core_users' })
 export class User extends BaseTenantEntity {

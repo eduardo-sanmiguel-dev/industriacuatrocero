@@ -1,21 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TenantPublicController } from './controllers/tenant-public.controller'; // 🚀 Registrar
+import { TenantService } from './services/tenant.service'; // 🚀 Registrar
+import { TenantComponent } from './entities/tenant-component.entity';
+import { TenantPermission } from './entities/tenant-permission.entity';
+import { TenantRole } from './entities/tenant-role.entity';
+import { TenantRolePermission } from './entities/tenant-role-permission.entity';
+import { TenantUserRole } from './entities/tenant-user-role.entity';
+import { TenantUserException } from './entities/tenant-user-exception.entity';
+import { Country } from './entities/country.entity';
+import { SystemAccount } from './entities/system-account.entity';
 import { Tenant } from './entities/tenant.entity';
 import { TenantBrand } from './entities/tenant-brand.entity';
 import { User } from './entities/user.entity';
-import { Country } from './entities/country.entity';
-import { SystemAccount } from './entities/system-account.entity';
-
-import { TenantPublicController } from './controllers/tenant-public.controller'; // 🚀 Registrar
-import { TenantService } from './services/tenant.service'; // 🚀 Registrar
-import {
-  TenantComponent,
-  TenantPermission,
-  TenantRole,
-  TenantRolePermission,
-  TenantUserRole,
-  TenantUserException,
-} from './entities';
+import { TenantUserPreference } from './entities/tenant-user-preference.entity';
 
 @Module({
   imports: [
@@ -32,6 +30,7 @@ import {
       TenantRolePermission,
       TenantUserRole,
       TenantUserException,
+      TenantUserPreference,
     ]),
   ],
   controllers: [

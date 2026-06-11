@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-import { BaseAuditEntity } from '../../../common/database/entities';
+import { BaseAuditEntity } from '../../../common/database/entities/base-audit.entity';
 import { Country } from './country.entity';
 import { TenantBrand } from './tenant-brand.entity';
 

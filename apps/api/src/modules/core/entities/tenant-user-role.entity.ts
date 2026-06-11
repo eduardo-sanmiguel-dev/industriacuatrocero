@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { TenantRole } from './tenant-role.entity';
 import { User } from './user.entity'; // Asegura la ruta exacta de tu entidad core_users
-import { BaseTenantEntity } from '../../../common/database/entities';
+import { BaseTenantEntity } from '../../../common/database/entities/base-tenant.entity';
 
 @Entity({ name: 'core_tenant_user_roles' })
 // 🔒 BLINDAJE MULTI-TENANT: Un usuario solo puede tener asignado un rol específico una única vez por empresa
