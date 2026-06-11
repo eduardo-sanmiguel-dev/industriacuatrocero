@@ -45,13 +45,7 @@ export class TenantMiddleware implements NestMiddleware {
     const parts = cleanHost.split('.');
     const targetSubdomain = parts[0] || ''; // Extrae limpiamente la palabra 'hada' o 'trujillo'
 
-    // Regla de escape automática para desarrollo local en tu computadora
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    const cleanSubdomain =
-      isDevelopment &&
-      (targetSubdomain === 'localhost' || targetSubdomain === '127')
-        ? 'hada'
-        : targetSubdomain;
+    const cleanSubdomain = targetSubdomain;
 
     console.log(
       `📡 [Multi-Tenant] Host procesado: "${cleanHost}" | Subdominio aislado: "${cleanSubdomain}"`,

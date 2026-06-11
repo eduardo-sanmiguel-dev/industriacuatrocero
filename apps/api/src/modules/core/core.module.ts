@@ -8,6 +8,14 @@ import { SystemAccount } from './entities/system-account.entity';
 
 import { TenantPublicController } from './controllers/tenant-public.controller'; // 🚀 Registrar
 import { TenantService } from './services/tenant.service'; // 🚀 Registrar
+import {
+  TenantComponent,
+  TenantPermission,
+  TenantRole,
+  TenantRolePermission,
+  TenantUserRole,
+  TenantUserException,
+} from './entities';
 
 @Module({
   imports: [
@@ -18,6 +26,12 @@ import { TenantService } from './services/tenant.service'; // 🚀 Registrar
       Country,
       SystemAccount,
       TenantBrand,
+      TenantComponent,
+      TenantPermission,
+      TenantRole,
+      TenantRolePermission,
+      TenantUserRole,
+      TenantUserException,
     ]),
   ],
   controllers: [

@@ -54,7 +54,7 @@ export async function seedUsers() {
       const newUser = userRepository.create({
         ...cleanUserData,
         tenantId: associatedTenant.id, // Forzamos el ID del Tenant en la columna común de tu multi-tenancy
-        tenant: associatedTenant, // Enlazamos la relación de objeto requerida por TypeORM
+        //tenant: associatedTenant, // Enlazamos la relación de objeto requerida por TypeORM
       });
 
       // Guardamos en PostgreSQL. Se auto-generará su id (UUID) y marcas de tiempo nativas en UTC

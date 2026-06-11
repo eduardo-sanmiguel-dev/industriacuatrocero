@@ -7,6 +7,7 @@ import { SystemAccount } from '../../core/entities/system-account.entity';
 import { LoginDto } from '../dto/login.dto';
 import { TenantContextService } from '../../../common/context/tenant-context.service';
 import { AUTH_TOKENS } from '../constants/auth.constants';
+import { UserProfileResponse } from '@synergy/types';
 
 // Interfaz interna estricta para el retorno acoplado del doble firmado asíncrono
 interface TokenPairResult {
@@ -183,7 +184,7 @@ export class AuthService {
    * @param userId UUID de la identidad en core_users
    * @returns Contrato tipado con el perfil unificado
    */
-  async getProfile(userId: string): Promise<any> {
+  async getProfile(userId: string): Promise<UserProfileResponse> {
     const currentTenantId = this.tenantContext.getTenantId();
 
     const account = await this.accountRepository.findOne({
