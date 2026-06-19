@@ -7,7 +7,10 @@ import { SystemAccount } from '../../core/entities/system-account.entity';
 import { LoginDto } from '../dto/login.dto';
 import { TenantContextService } from '../../../common/context/tenant-context.service';
 import { AUTH_TOKENS } from '../constants/auth.constants';
-import { UserProfileResponse } from '@synergy/types';
+import type { UserPreferences, UserProfileResponse } from '@synergy/types';
+import { TenantUserRole } from '../../core/entities/tenant-user-role.entity';
+import { PermissionCacheService } from '../../core/services/permission-cache.service';
+import { TenantUserPreference } from '../../core/entities/tenant-user-preference.entity';
 
 // Interfaz interna estricta para el retorno acoplado del doble firmado asíncrono
 interface TokenPairResult {
@@ -33,6 +36,9 @@ export class AuthService {
     @InjectRepository(SystemAccount)
     private readonly accountRepository: Repository<SystemAccount>,
 
+    @InjectRepository(TenantUserRole)
+    private readonly tenantUserRoleRepository: Repository<TenantUserRole>,
+
     // 🔑 Inyección por defecto del módulo (Se encargará de los Access Tokens de 15 minutos)
     private readonly accessTokenService: JwtService,
 
@@ -42,7 +48,68 @@ export class AuthService {
 
     // Lector automático del contexto del almacenamiento local asíncrono (ALS)
     private readonly tenantContext: TenantContextService,
+
+    private readonly permissionCacheService: PermissionCacheService,
+
+    @InjectRepository(TenantUserPreference)
+    private readonly preferenceRepository: Repository<TenantUserPreference>,
   ) {}
+
+  private async getFlattenedUserPerms(
+    userId: string,
+    tenantId: string,
+  ): Promise<string[]> {
+    // Buscamos todas las asignaciones vigentes del usuario aislando por el Tenant actual
+    const userRolesLinks = await this.tenantUserRoleRepository.find({
+      where: {
+        isActive: true,
+        tenantId,
+        userId,
+      },
+      relations: {
+        tenantRole: {
+          rolePermissions: {
+            tenantPermission: true,
+          },
+        },
+      },
+    });
+
+    if (!userRolesLinks.length) {
+      throw new UnauthorizedException(
+        'No se encontraron roles asignados para este usuario en la organización actual.',
+      );
+    }
+
+    // 🧠 REGLA DE EXTRACCIÓN MODERNA (FLATMAP):
+    // Navegamos por el árbol de relaciones para aislar únicamente el string del 'code'
+    const permissionsArray = userRolesLinks.flatMap((userRoleLink) =>
+      userRoleLink.tenantRole.rolePermissions.map(
+        (rolePerm) => rolePerm.tenantPermission.code,
+      ),
+    );
+
+    // Eliminamos duplicados residuales en memoria en caso de que el usuario comparta roles con permisos similares
+    return [...new Set(permissionsArray)];
+  }
+
+  private async getFlattenedUserPrefs(
+    userId: string,
+    tenantId: string,
+  ): Promise<UserPreferences> {
+    // Buscamos el registro físico indexado por el B-Tree compuesto de PostgreSQL
+    const preferencesRecord = await this.preferenceRepository.findOne({
+      where: { userId, tenantId, isActive: true },
+    });
+
+    // 🚀 RETORNO CONTRATO UNIFICADO COMPATIBLE CON @synergy/types
+    // Si el usuario no tiene preferencias guardadas aún, inyectamos los valores por defecto del SaaS
+    return {
+      themeMode: preferencesRecord?.themeMode ?? 'light',
+      defaultLandingPage: preferencesRecord?.defaultLandingPage ?? null,
+      agGridState: preferencesRecord?.agGridState ?? null, // Tu objeto JSONB nativo de AG Grid
+    };
+  }
 
   /**
    * Valida las credenciales con Argon2id y genera un par híbrido de tokens (Access 15m + Refresh 7d)
@@ -90,17 +157,50 @@ export class AuthService {
 
     // Identificador único de la persona física
     const userIdStr = account.user.id;
+    const email = account.email;
 
     // 🧠 METADATOS COMPARTIDOS PARA AMBOS TOKENS
     const payload = {
       sub: userIdStr,
-      email: account.email,
+      email,
       tenantId: account.tenantId, // Sellado inalterable del inquilino actual
     };
 
     // FIRMADO PARALELO ASÍNCRONO: Cada motor aplica sus propias llaves y tiempos de expiración
     const accessToken = this.accessTokenService.sign(payload); // Expira en 15 minutos
     const refreshToken = this.refreshTokenService.sign(payload); // Expira en 7 días exactos
+
+    const tenantId = account.tenantId;
+
+    // 1. Calculamos y guardamos Permisos en Caché (Estrategia flatMap)
+    const userPermissions = await this.getFlattenedUserPerms(
+      userIdStr,
+      tenantId,
+    );
+    await this.permissionCacheService.setPermissions(
+      tenantId,
+      userIdStr,
+      userPermissions,
+    );
+
+    // 🚀 2. NUEVO LLAMADO: Calculamos y guardamos Preferencias en Caché
+    const userPreferences = await this.getFlattenedUserPrefs(
+      userIdStr,
+      tenantId,
+    );
+    await this.permissionCacheService.setPreferences(
+      tenantId,
+      userIdStr,
+      userPreferences,
+    );
+
+    /*await this.permissionCacheService.getCacheMemoryMetrics();
+    const currentCache = await this.permissionCacheService.getAllCacheContent();
+    console.log({ currentCache });*/
+
+    console.log(
+      `⚡ [Login Success] Seguridad y UI inyectadas en la RAM de forma unificada.`,
+    );
 
     // Retornamos el bloque unificado libre de variables nulas o indefinidas para TypeScript
     return {
@@ -191,6 +291,7 @@ export class AuthService {
       // 🚀 SOLUCIÓN: Atacamos la relación 'user' pidiéndole el ID de forma explícita
       where: {
         tenantId: currentTenantId,
+        isActive: true,
         user: {
           id: userId,
         },
@@ -206,6 +307,17 @@ export class AuthService {
       );
     }
 
+    console.log({ currentTenantId, userId });
+
+    const permissions = await this.permissionCacheService.getPermissions(
+      currentTenantId,
+      userId,
+    );
+    const preferences = await this.permissionCacheService.getPreferences(
+      currentTenantId,
+      userId,
+    );
+
     return {
       user: {
         id: account.user.id,
@@ -217,6 +329,8 @@ export class AuthService {
         id: account.user.tenant.id,
         subdomain: account.user.tenant.subdomain,
       },
+      permissions: permissions,
+      preferences: preferences,
     };
   }
 }

@@ -157,7 +157,7 @@ export async function seedHcmJobs() {
         const newJob = jobRepository.create({
           name: name,
           tenantId: tenant.id,
-          createdBy: systemAccount.user.id as string, // Cast seguro para evitar falsos positivos del linter
+          createdBy: systemAccount.user.id,
         });
 
         await jobRepository.save(newJob);

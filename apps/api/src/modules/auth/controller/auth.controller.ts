@@ -119,6 +119,7 @@ export class AuthController {
     return {
       message: 'Sesión iniciada correctamente.',
       accessToken: accessToken,
+      refreshToken: refreshToken,
       user: userPayload,
     };
   }

@@ -5,6 +5,7 @@ import { AuthService } from './services/auth.service';
 import { CoreModule } from '../core/core.module';
 import { env } from '../../env';
 import { AUTH_TOKENS } from './constants/auth.constants';
+import { PermissionCacheService } from '../core/services/permission-cache.service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AUTH_TOKENS } from './constants/auth.constants';
   controllers: [AuthController],
   providers: [
     AuthService,
+    PermissionCacheService,
     // 🚀 FIRMADOR DE REFRESH AUXILIAR: Instanciación limpia, 100% tipada y libre de 'any'
     {
       provide: AUTH_TOKENS.REFRESH_JWT_SERVICE,

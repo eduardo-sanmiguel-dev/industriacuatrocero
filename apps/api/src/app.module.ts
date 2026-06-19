@@ -1,8 +1,6 @@
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-
 import { join } from 'path';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { env } from 'process';
 import { isDevelopment, isProduction } from './env';
@@ -12,6 +10,7 @@ import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { TenantContextModule } from './common/context/tenant-context.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -26,6 +25,12 @@ import { TenantContextModule } from './common/context/tenant-context.module';
       synchronize: isDevelopment,
       migrationsRun: isProduction,
       migrations: [join(__dirname, 'database/migrations/*.{ts,js}')],
+    }),
+    // 🧠 CONFIGURACIÓN MAESTRA DE CACHÉ IN-MEMORY
+    CacheModule.register({
+      isGlobal: true, // 🌍 Hace que el almacén esté disponible en todo el monorepo sin re-importarlo
+      ttl: 0, // 🔒 ESTÁNDAR DE ORO: Tiempo de vida 0 significa Indefinido (No expira solo)
+      max: 1000, // Límite máximo de llaves en memoria simultáneas para proteger la RAM del VPS
     }),
     TenantContextModule,
     CoreModule,

@@ -127,7 +127,7 @@ export async function seedHcmEmployees() {
     }
 
     // 4. Creamos la ficha de empleado inyectando el creador obligatorio con cast seguro
-    const userIdStr = associatedUser.id as string;
+    const userIdStr = associatedUser.id;
     const newEmployee = employeeRepository.create({
       employeeCode: empData.employeeCode,
       governmentId: empData.governmentId,

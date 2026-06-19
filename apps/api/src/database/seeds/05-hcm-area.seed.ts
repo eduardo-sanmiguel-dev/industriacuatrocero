@@ -88,7 +88,7 @@ export async function seedHcmAreas() {
         const newArea = areaRepository.create({
           name: name,
           tenantId: tenant.id, // Aislamiento multi-tenant
-          createdBy: systemAccount.user.id as string, // 🚀 REGLA APLICADA: Extrae e inyecta el ID puro del usuario Eduardo o Victoria
+          createdBy: systemAccount.user.id, // 🚀 REGLA APLICADA: Extrae e inyecta el ID puro del usuario Eduardo o Victoria
         });
 
         // Guardamos físicamente en PostgreSQL en formato UTC
