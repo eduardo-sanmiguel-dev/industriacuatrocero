@@ -32,8 +32,10 @@ export async function seedTenants() {
           'Bienvenido al ecosistema de Logística y Comercio Exterior de Hada',
         primaryColor: '#0056B3', // Azul corporativo de distribución
         sidebarBgColor: '#1A252F', // Gris oscuro elegante para el menú
-        logoUrl: 'https://synergy-saas.com',
-        faviconUrl: 'https://synergy-saas.com',
+        logoUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781105334/favicon_zsu8kp.png',
+        faviconUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781106433/logo_efsk0x.png',
       },
     },
     {
@@ -52,8 +54,10 @@ export async function seedTenants() {
           'Panel Corporativo de Manufactura y Aseguramiento de Calidad',
         primaryColor: '#E91E63', // Rosa/Magenta enfocado a la industria de la cosmética
         sidebarBgColor: '#2C3E50', // Azul marino industrial para el menú lateral
-        logoUrl: 'https://synergy-saas.com',
-        faviconUrl: 'https://synergy-saas.com',
+        logoUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781104725/favicon_wp3xgq.png',
+        faviconUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781106413/logo_ingspq.png',
       },
     },
   ];

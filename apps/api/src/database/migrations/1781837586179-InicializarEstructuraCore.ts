@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InicializarEstructuraCore1781148876747 implements MigrationInterface {
-    name = 'InicializarEstructuraCore1781148876747'
+export class InicializarEstructuraCore1781837586179 implements MigrationInterface {
+    name = 'InicializarEstructuraCore1781837586179'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "core_countries" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "country_code" character varying(2) NOT NULL, "name" character varying(100) NOT NULL, "phone_code" character varying(5) NOT NULL, "currency_code" character varying(3) NOT NULL, CONSTRAINT "UQ_ebed2e4e3c101bd0192d899e4b5" UNIQUE ("name"), CONSTRAINT "PK_9074e45b7c98fa89aa3263044a3" PRIMARY KEY ("id"))`);
@@ -21,11 +21,11 @@ export class InicializarEstructuraCore1781148876747 implements MigrationInterfac
         await queryRunner.query(`CREATE TABLE "core_tenant_role_permissions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenant_id" uuid NOT NULL, "tenant_role_id" uuid NOT NULL, "tenant_permission_id" uuid NOT NULL, CONSTRAINT "PK_2247fb821d5e18c91bca998dad4" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_1e4cab15b3067f8f230758d061" ON "core_tenant_role_permissions"  ("tenant_id", "id") `);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_992c73dc8b0a5c75b3f9a34baa" ON "core_tenant_role_permissions"  ("tenant_id", "tenant_role_id", "tenant_permission_id") `);
-        await queryRunner.query(`CREATE TABLE "core_tenant_user_preferences" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenant_id" uuid NOT NULL, "created_by" uuid NOT NULL, "updated_by" uuid, "user_id" uuid NOT NULL, "theme_mode" character varying(10) NOT NULL DEFAULT 'light', "default_landing_page" character varying(150), "ag_grid_state" jsonb, CONSTRAINT "UQ_eb4cac3d6c4548c23e50738e1bf" UNIQUE ("user_id"), CONSTRAINT "REL_eb4cac3d6c4548c23e50738e1b" UNIQUE ("user_id"), CONSTRAINT "PK_9ef143f8c6b91d4c7a840c3f701" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_a9772f72598c60206b3cf40523" ON "core_tenant_user_preferences"  ("tenant_id", "id") `);
         await queryRunner.query(`CREATE TABLE "core_tenant_user_exceptions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenant_id" uuid NOT NULL, "user_id" uuid NOT NULL, "tenant_permission_id" uuid NOT NULL, "is_granted" boolean NOT NULL DEFAULT true, CONSTRAINT "PK_c35ef181facfdd1bfa3575f2b60" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_beb28bf0ce22bcd81ac8c9268f" ON "core_tenant_user_exceptions"  ("tenant_id", "id") `);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_bd294b36f353a94fdb2edfa9cb" ON "core_tenant_user_exceptions"  ("tenant_id", "user_id", "tenant_permission_id") `);
+        await queryRunner.query(`CREATE TABLE "core_tenant_user_preferences" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenant_id" uuid NOT NULL, "created_by" uuid NOT NULL, "updated_by" uuid, "user_id" uuid NOT NULL, "theme_mode" character varying(10) NOT NULL DEFAULT 'light', "default_landing_page" character varying(150), "ag_grid_state" jsonb, CONSTRAINT "UQ_eb4cac3d6c4548c23e50738e1bf" UNIQUE ("user_id"), CONSTRAINT "REL_eb4cac3d6c4548c23e50738e1b" UNIQUE ("user_id"), CONSTRAINT "PK_9ef143f8c6b91d4c7a840c3f701" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_a9772f72598c60206b3cf40523" ON "core_tenant_user_preferences"  ("tenant_id", "id") `);
         await queryRunner.query(`CREATE TABLE "core_tenant_user_roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "tenant_id" uuid NOT NULL, "user_id" uuid NOT NULL, "tenant_role_id" uuid NOT NULL, CONSTRAINT "PK_2ee64b4ea7aea0f4ee6e31dbdd1" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_9011cf00a86681d1436c24bbfb" ON "core_tenant_user_roles"  ("tenant_id", "id") `);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_5b2e5f1d142f48135f78efd11e" ON "core_tenant_user_roles"  ("tenant_id", "user_id", "tenant_role_id") `);
@@ -49,11 +49,11 @@ export class InicializarEstructuraCore1781148876747 implements MigrationInterfac
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" ADD CONSTRAINT "FK_179a41835ab9fcfa97a975c7f4b" FOREIGN KEY ("tenant_id") REFERENCES "core_tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" ADD CONSTRAINT "FK_634033b0d45a9a89520abef15df" FOREIGN KEY ("tenant_role_id") REFERENCES "core_tenant_roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" ADD CONSTRAINT "FK_8ce5e81bc1524f4033e1ebf337e" FOREIGN KEY ("tenant_permission_id") REFERENCES "core_tenant_permissions"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" ADD CONSTRAINT "FK_cea1d940d5fbf56f1f222508ce3" FOREIGN KEY ("tenant_id") REFERENCES "core_tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" ADD CONSTRAINT "FK_eb4cac3d6c4548c23e50738e1bf" FOREIGN KEY ("user_id") REFERENCES "core_users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" ADD CONSTRAINT "FK_122edc86610be21b458844ac488" FOREIGN KEY ("tenant_id") REFERENCES "core_tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" ADD CONSTRAINT "FK_12b15679cfec1c1aa7a68e50981" FOREIGN KEY ("user_id") REFERENCES "core_users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" ADD CONSTRAINT "FK_f24c63ed9e3d40d065a7c206794" FOREIGN KEY ("tenant_permission_id") REFERENCES "core_tenant_permissions"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" ADD CONSTRAINT "FK_cea1d940d5fbf56f1f222508ce3" FOREIGN KEY ("tenant_id") REFERENCES "core_tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" ADD CONSTRAINT "FK_eb4cac3d6c4548c23e50738e1bf" FOREIGN KEY ("user_id") REFERENCES "core_users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" ADD CONSTRAINT "FK_18421b774296c68eb2fda600353" FOREIGN KEY ("tenant_id") REFERENCES "core_tenants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" ADD CONSTRAINT "FK_b249fb0564e1672207c94af01dd" FOREIGN KEY ("user_id") REFERENCES "core_users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" ADD CONSTRAINT "FK_2bca11240a35774c83b9c636540" FOREIGN KEY ("tenant_role_id") REFERENCES "core_tenant_roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
@@ -75,11 +75,11 @@ export class InicializarEstructuraCore1781148876747 implements MigrationInterfac
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" DROP CONSTRAINT "FK_2bca11240a35774c83b9c636540"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" DROP CONSTRAINT "FK_b249fb0564e1672207c94af01dd"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_roles" DROP CONSTRAINT "FK_18421b774296c68eb2fda600353"`);
+        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" DROP CONSTRAINT "FK_eb4cac3d6c4548c23e50738e1bf"`);
+        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" DROP CONSTRAINT "FK_cea1d940d5fbf56f1f222508ce3"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" DROP CONSTRAINT "FK_f24c63ed9e3d40d065a7c206794"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" DROP CONSTRAINT "FK_12b15679cfec1c1aa7a68e50981"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_user_exceptions" DROP CONSTRAINT "FK_122edc86610be21b458844ac488"`);
-        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" DROP CONSTRAINT "FK_eb4cac3d6c4548c23e50738e1bf"`);
-        await queryRunner.query(`ALTER TABLE "core_tenant_user_preferences" DROP CONSTRAINT "FK_cea1d940d5fbf56f1f222508ce3"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" DROP CONSTRAINT "FK_8ce5e81bc1524f4033e1ebf337e"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" DROP CONSTRAINT "FK_634033b0d45a9a89520abef15df"`);
         await queryRunner.query(`ALTER TABLE "core_tenant_role_permissions" DROP CONSTRAINT "FK_179a41835ab9fcfa97a975c7f4b"`);
@@ -103,11 +103,11 @@ export class InicializarEstructuraCore1781148876747 implements MigrationInterfac
         await queryRunner.query(`DROP INDEX "public"."IDX_5b2e5f1d142f48135f78efd11e"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_9011cf00a86681d1436c24bbfb"`);
         await queryRunner.query(`DROP TABLE "core_tenant_user_roles"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a9772f72598c60206b3cf40523"`);
+        await queryRunner.query(`DROP TABLE "core_tenant_user_preferences"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_bd294b36f353a94fdb2edfa9cb"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_beb28bf0ce22bcd81ac8c9268f"`);
         await queryRunner.query(`DROP TABLE "core_tenant_user_exceptions"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_a9772f72598c60206b3cf40523"`);
-        await queryRunner.query(`DROP TABLE "core_tenant_user_preferences"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_992c73dc8b0a5c75b3f9a34baa"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_1e4cab15b3067f8f230758d061"`);
         await queryRunner.query(`DROP TABLE "core_tenant_role_permissions"`);
