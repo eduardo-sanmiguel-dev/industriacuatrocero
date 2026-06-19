@@ -30,12 +30,12 @@ export async function seedTenants() {
         companyLegalName: 'Hada International S.A.S.',
         loginWelcomeText:
           'Bienvenido al ecosistema de Logística y Comercio Exterior de Hada',
-        primaryColor: '#0056B3', // Azul corporativo de distribución
-        sidebarBgColor: '#1A252F', // Gris oscuro elegante para el menú
+        primaryColor: '#00B3AB', // Turquesa vibrante para un contraste moderno y tecnológico
+        sidebarBgColor: '#004D65', // Azul profundo para transmitir confianza y profesionalismo en logística internacional
         logoUrl:
-          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781105334/favicon_zsu8kp.png',
-        faviconUrl:
           'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781106433/logo_efsk0x.png',
+        faviconUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781105334/favicon_zsu8kp.png',
       },
     },
     {
@@ -52,12 +52,12 @@ export async function seedTenants() {
         companyLegalName: 'Cosméticos Trujillo S.A de C.V',
         loginWelcomeText:
           'Panel Corporativo de Manufactura y Aseguramiento de Calidad',
-        primaryColor: '#E91E63', // Rosa/Magenta enfocado a la industria de la cosmética
-        sidebarBgColor: '#2C3E50', // Azul marino industrial para el menú lateral
+        primaryColor: '#75AD2A', // Verde vibrante para reflejar frescura y naturaleza en cosméticos
+        sidebarBgColor: '#646569', // Gris medio para un contraste suave con el verde
         logoUrl:
-          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781104725/favicon_wp3xgq.png',
-        faviconUrl:
           'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781106413/logo_ingspq.png',
+        faviconUrl:
+          'https://res.cloudinary.com/deqs6yvl4/image/upload/q_auto/f_auto/v1781104725/favicon_wp3xgq.png',
       },
     },
   ];
