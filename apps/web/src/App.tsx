@@ -283,7 +283,7 @@ export default function LoginPage() {
                   </div>
                 )}
                 <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">
-                  Bienvenido a {companyName}
+                  Bienvenido
                 </h2>
                 {brandLoading ? (
                   <p className="text-[11px] text-slate-500 mt-1">
